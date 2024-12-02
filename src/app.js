@@ -7,10 +7,10 @@ const User = require("../src/models/user");
 app.post("/signup", async (req, res) => {
   try {
     const user = await new User({
-      firstName: "Laxman",
+      firstName: "Ram",
       lastName: "Giri",
-      email: "laxman@gmail.com",
-      age: 45,
+      email: "ram@gmail.com",
+      age: 15,
       gender: "male",
     });
     //code to save the user
