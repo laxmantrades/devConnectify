@@ -4,9 +4,65 @@ const app = express();
 
 //--The order is very important--//
 
-app.get("/user", (req, res) => {
+app.get(
+  "/user",
+  (req, res, next) => {
+    
+    console.log("This is a first request");
+    next()
+    //res.send("Response 1")
+    
+  },
+  [(req, res, next) => {
+    console.log("This is a second request");
+    //res.send("Response 2")
+    next()
+  }],
+  [(req, res, next) => {
+    console.log("This is a Third request");
+    //res.send("Response 3")
+    next()
+  }],
+  (req, res, next) => {
+    
+    console.log("This is a Fourth request");
+    res.send("Response 4")
+    next()
+    
+  }
+);
+
+//----This means the url that ends with fly ----//
+
+/*app.get(/.*fly$/, (req, res) => {
+ //----->>If i have /a/ then the letter shoulld have atleast one a
+  
   res.send({ firstname: "Ram", lastName: "Giri" });
 });
+
+app.get('/example/b', (req, res, next) => {
+  console.log('the response will be sent by the next function ...')
+  next()
+}, (req, res) => {
+  res.send('Hello from B!')
+})
+
+/*app.get("/user", (req, res) => {
+ 
+  console.log(req.query) //------>>>>>{ userId: '105' }
+
+  //--http://localhost:7777/user?105==>>>>>>>>  { '105': '' }   --//
+  //--http://localhost:7777/user?userID=105==>>>>>>>>  { 'userId': '105' }   --//
+  res.send({ firstname: "Ram", lastName: "Giri" });
+});
+
+
+/*
+app.get("/user/:userId/:name/:age", (req, res) => {
+  console.log(req.params);  //--->>{ userId: '200', name: 'laxman', age: '45' }
+  res.send({ firstname: "Ram", lastName: "Giri" });
+});
+
 
 
 
