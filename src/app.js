@@ -3,6 +3,9 @@ const connectDb = require("../src/config/database");
 
 const app = express();
 const User = require("../src/models/user");
+const { validate } = require("./utils/validator");
+const bcrypt=require("bcrypt")
+
 
 //This will convert the json object to all the routes and methods
 app.use(express.json());
@@ -25,76 +28,83 @@ app.get("/feed", async (req, res) => {
 app.get("/user", async (req, res) => {
   try {
     //finding by email id
-    const findEmail = await req.body.emailId
-   
+    const findEmail = await req.body.emailId;
 
-    const userEmail = await User.findOne({emailId:findEmail});
+    const userEmail = await User.findOne({ emailId: findEmail });
     if (!userEmail) {
       res.send("Could not find the emailid");
     } else {
       res.send(userEmail);
     }
-    
   } catch (error) {
     res.status(400).send("Something went wrong");
   }
 });
-//This will delete the collection 
-app.delete("/user",async(req,res)=>{
-  
+//This will delete the collection
+app.delete("/user", async (req, res) => {
   try {
-    const userId=req.body.userId
-    
-    
-    const user=await  User.findByIdAndDelete(userId)
-    
-    
-    if(user===null){
-      res.send("User is not in the database")
-    }
-    else{
-      res.send("Deleted Succesfully")
-    }
-    
-    
-  } catch (error) {
-    res.status(400).send("Something went wrong")
-  }
+    const userId = req.body.userId;
 
-})
+    const user = await User.findByIdAndDelete(userId);
+
+    if (user === null) {
+      res.send("User is not in the database");
+    } else {
+      res.send("Deleted Succesfully");
+    }
+  } catch (error) {
+    res.status(400).send("Something went wrong");
+  }
+});
 //This will update the collection
-app.patch("/user",async(req,res)=>{
-
+app.patch("/user", async (req, res) => {
   try {
-    const userID=req.body.age
-    const needtoUpdate=req.body
-    //await User.findByIdAndUpdate(userID,needtoUpdate)
-    //The first argument is to find the document second is update 
-    await User.findOneAndUpdate({age:userID},needtoUpdate)
-    res.send("Succesfully updated the data")
-    
+    const userID = req.body._id;
+    const needtoUpdate = req.body;
+    const AllOWEDUPDATES = ["_id","photoUrl", "gender", "age", "about", "skills"];
+    const isUpdatedAllowed = Object.keys(needtoUpdate).every((k) =>
+      AllOWEDUPDATES.includes(k)
+    );
+    if (!isUpdatedAllowed) {
+      throw new Error("You can't update ");
+    }
+    if (needtoUpdate?.skills?.length > 10) {
+      throw new Error("Skills can't be more then 10");
+    }
+
+    await User.findByIdAndUpdate(userID, needtoUpdate, { runValidators: true });
+    //The first argument is to find the document second is update
+    //await User.findOneAndUpdate({age:userID},needtoUpdate)
+    res.send("Succesfully updated the data");
   } catch (error) {
-    res.status(401).send("Something went wrong")
+    res.status(401).send("Something went wrong "+ error.message);
   }
-})
-
-
-
-
+});
 
 app.post("/signup", async (req, res) => {
   try {
-    //---this req.body is the json we created from postman---//
-    const userEmail = req.body;
 
-    //----->>>>creating new instances of the User Schema
-    const user = await new User(userEmail);
+    
+    //validating 
+    validate(req)
+    const {firstName,lastName,emailId,password}=req.body
+    //encrypting
+    const hashPassword=await bcrypt.hash(password,10)
+    
+   
+    
+
+    //----->>>>creating new instances of the User Schema from the body 
+    const user = await new User({
+      firstName,lastName,emailId,password:hashPassword
+    });
+
     //code to save the user
-    user.save();
+    await user.save();
 
     res.send("Succesfully pushed information to DB");
-  } catch (error) {
-    console.error("Db could not be sent");
+  } catch (err) {
+    res.send("Error saving the Database" + err.message);
   }
 });
 connectDb().then(() => {
