@@ -107,6 +107,29 @@ app.post("/signup", async (req, res) => {
     res.send("Error saving the Database" + err.message);
   }
 });
+app.post("/login",async (req,res)=>{
+  try {
+    const {emailId,password}=req.body
+    //this will find the user by email from the db
+    const user=await User.findOne({emailId:emailId})
+    if(!user){
+      throw new Error("Invalid Credentials")
+    }
+    const haspassword=await bcrypt.compare(password,user.password)
+    
+    if (!haspassword) {
+     throw new Error("Invalid Credentials")
+      
+    }
+    else if(haspassword) {
+      res.send("Login Successfull")
+    }
+
+    
+  } catch (error) {
+    res.status(400).send("Something went wrong"+error.message)
+  }
+})
 connectDb().then(() => {
   app.listen(7777, () => {
     console.log("Server is listening to port 7777");
