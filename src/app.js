@@ -4,11 +4,13 @@ const connectDb = require("../src/config/database");
 const app = express();
 const User = require("../src/models/user");
 const { validate } = require("./utils/validator");
-const bcrypt=require("bcrypt")
+const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
-
-//This will convert the json object to all the routes and methods
+//This will convert the json object from all the routes and methods
 app.use(express.json());
+app.use(cookieParser());
 
 //This will find all the users present in my collection
 app.get("/feed", async (req, res) => {
@@ -61,7 +63,14 @@ app.patch("/user", async (req, res) => {
   try {
     const userID = req.body._id;
     const needtoUpdate = req.body;
-    const AllOWEDUPDATES = ["_id","photoUrl", "gender", "age", "about", "skills"];
+    const AllOWEDUPDATES = [
+      "_id",
+      "photoUrl",
+      "gender",
+      "age",
+      "about",
+      "skills",
+    ];
     const isUpdatedAllowed = Object.keys(needtoUpdate).every((k) =>
       AllOWEDUPDATES.includes(k)
     );
@@ -77,26 +86,24 @@ app.patch("/user", async (req, res) => {
     //await User.findOneAndUpdate({age:userID},needtoUpdate)
     res.send("Succesfully updated the data");
   } catch (error) {
-    res.status(401).send("Something went wrong "+ error.message);
+    res.status(401).send("Something went wrong " + error.message);
   }
 });
-
+//This will signup the login and push the data to db
 app.post("/signup", async (req, res) => {
   try {
-
-    
-    //validating 
-    validate(req)
-    const {firstName,lastName,emailId,password}=req.body
+    //validating
+    validate(req);
+    const { firstName, lastName, emailId, password } = req.body;
     //encrypting
-    const hashPassword=await bcrypt.hash(password,10)
-    
-   
-    
+    const hashPassword = await bcrypt.hash(password, 10);
 
-    //----->>>>creating new instances of the User Schema from the body 
+    //----->>>>creating new instances of the User Schema from the body
     const user = await new User({
-      firstName,lastName,emailId,password:hashPassword
+      firstName,
+      lastName,
+      emailId,
+      password: hashPassword,
     });
 
     //code to save the user
@@ -107,29 +114,55 @@ app.post("/signup", async (req, res) => {
     res.send("Error saving the Database" + err.message);
   }
 });
-app.post("/login",async (req,res)=>{
+//This will login by comparing the password and email from the db
+app.post("/login", async (req, res) => {
   try {
-    const {emailId,password}=req.body
+    const { emailId, password } = req.body;
     //this will find the user by email from the db
-    const user=await User.findOne({emailId:emailId})
-    if(!user){
-      throw new Error("Invalid Credentials")
+    const user = await User.findOne({ emailId: emailId });
+    if (!user) {
+      throw new Error("Invalid Credentials");
     }
-    const haspassword=await bcrypt.compare(password,user.password)
-    
+    const haspassword = await bcrypt.compare(password, user.password);
+
     if (!haspassword) {
-     throw new Error("Invalid Credentials")
-      
+      throw new Error("Invalid Credentials");
+    } else if (haspassword) {
+      //Create a JWT TOKEN
+
+      const token = await jwt.sign({ _id: user._id }, "Laxman@123");
+
+      //send token to the browser
+      res.cookie("token", token);
+      res.send("Login Successfull");
     }
-    else if(haspassword) {
-      res.send("Login Successfull")
+  } catch (error) {
+    res.status(400).send("Something went wrong" + error.message);
+  }
+});
+
+app.get("/profile", async (req, res) => {
+  try {
+    //read the token
+    const { token } = await req.cookies;
+    if (!token) {
+      throw new Error("Please login again");
     }
 
-    
+    //validate the token
+    const decoded = await jwt.verify(token, "Laxman@123");
+
+    const { _id } = decoded;
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+
+    res.send(user);
   } catch (error) {
-    res.status(400).send("Something went wrong"+error.message)
+    res.status(400).send("Something went wrong " + error.message);
   }
-})
+});
 connectDb().then(() => {
   app.listen(7777, () => {
     console.log("Server is listening to port 7777");

@@ -97,7 +97,7 @@
 
 ## Added the express.json middleware to your app
 
-## Made  signup API dynamic to recive data from the end user
+## Made signup API dynamic to recive data from the end user
 
 ## User.findOne with duplucate email ids, which object returned
 
@@ -111,12 +111,53 @@
 
 ## Difference between PATCH and PUT
 
+- Patch means updating a specific field while if we use put to change all the things in bulk. If we did not write any fields to update then it will write null itself
+
 ## API - Updated a user
 
 ## Explored the Mongoose Documention for Model methods
 
 ## What are options in a Model.findOneAndUpdate method, explore more about it
+
 - findOneAndUpdate will find by any of the field given and will update
 
 ## API - Update the user with email ID
 
+## Explore the Mongoose Documention for Model methods
+
+## What are options in a Model.findOneAndUpdate method, explore more about it
+-  We have runvalidators options 
+
+## API - Update the user with email ID
+
+## Explore schematype options from the documention
+
+## add required, unique, lowercase, min, minLength, trim
+
+## Add default
+
+## Create a custom validate function for gender
+
+## Improve the DB schema - PUT all appropiate validations on each field in Schema
+
+## Add timestamps to the userSchema
+
+## Add API level validation on Patch request & Signup post api
+
+## DATA Sanitizing - Add API validation for each field
+
+## Install validator
+
+## Explore validator library funcation and Use vlidator funcs for password, email, photoURL
+
+## NEVER TRUST req.body
+
+## Validate data in Signup API
+
+## Install bcrypt package
+
+## Create PasswordHash using bcrypt.hash & save the user is excrupted password
+
+## Create login API
+
+## Compare passwords and throw errors if email or password is invalid
