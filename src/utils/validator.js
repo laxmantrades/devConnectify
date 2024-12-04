@@ -11,5 +11,10 @@ const validate = (req) => {
     throw new Error("Please enter a strong password!")
   }
 };
+const validatorForProfileChange=(req)=>{
+    const isAllowed=["photoUrl","about","skills","firstName","lastName"]
+    const isEditAllowed=Object.keys(req.body).every((k)=>isAllowed.includes(k))
+    return isEditAllowed
+}
 
-module.exports={validate}
+module.exports={validate,validatorForProfileChange}
