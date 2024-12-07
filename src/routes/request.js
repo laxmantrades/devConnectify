@@ -47,5 +47,43 @@ requestRouter.post("/request/:status/:userID", userAuth, async (req, res) => {
     res.status(400).send("Error: " + error.message);
   }
 });
+requestRouter.post(
+  "/request/review/:status/:toUserID",
+  userAuth,
+  async (req, res) => {
+    try {
+      const { toUserID, status } = req.params;
+      const loggedInUser = await req.user;
+      //status validation
+      const statusAllowed = ["accepted", "rejected"];
+      if (!statusAllowed.includes(status)) {
+        throw new Error("Invalid Field");
+      }
+      //touserId validation is already done down
+      
+
+      //find by touserID , if status is there then only
+      const connectionRequest = await ConnectionRequest.findOne({
+        _id: toUserID,
+        toUserID: loggedInUser._id,
+        status: "interested",
+      });
+      if (!connectionRequest) {
+        return res.status(400).send("The connection doesn't exist")
+        
+      }
+      connectionRequest.status= status
+      const data=await connectionRequest.save()
+      
+
+      //then update it
+
+      res.json({message:`Succefully ${status} request `,
+      data:data});
+    } catch (error) {
+      res.status(400).send("Error:" + error.message);
+    }
+  }
+);
 
 module.exports = requestRouter;
