@@ -2,6 +2,7 @@ const express = require("express");
 const { userAuth } = require("../Middlewares/auth");
 const userRouter = express.Router();
 const ConnectionRequest = require("../models/connectionRequest");
+const User = require("../models/user");
 
 userRouter.get("/user/request/received", userAuth, async (req, res) => {
   try {
@@ -38,9 +39,8 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       if (row.fromUserID._id.equals(loggedInUser._id)) {
         return row.toUserID;
       }
-    
-        return row.fromUserID;
-      
+
+      return row.fromUserID;
     });
 
     res.json({
@@ -49,6 +49,43 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
     });
   } catch (error) {
     res.status(400).send("Error:" + error.message);
+  }
+});
+userRouter.get("/user/feed", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const feedProfile="firstName lastName photoUrl about skills"
+    const page=parseInt(req.query.page) || 1
+    limit=parseInt(req.query.limit)  || 10
+    limit=limit>50?50 : limit
+    let skip=(page-1)*limit
+    console.log(page,limit);
+    
+
+
+    //find the list that a person is stored in connection collection
+    const findConnectionCollection = await ConnectionRequest.find({
+      $or: [{ fromUserID: loggedInUser._id }, { toUserID: loggedInUser._id }],
+    }).select("fromUserID toUserID");
+
+    //now sorting
+    const hideUsersList=new Set()
+    //now pushing each item to hideUerslist
+    findConnectionCollection.forEach((req) => {
+      hideUsersList.add(req.fromUserID.toString())
+      hideUsersList.add(req.toUserID.toString())
+    });
+    //now searching from user Collection that doesn't have any connection
+    const showuser= await User.find({
+      $and:[
+        {_id:{$nin:Array.from(hideUsersList)}},
+        {_id:{$ne:loggedInUser._id}}
+      ]
+    }).select(feedProfile).skip(skip).limit(limit)
+    
+    res.send(showuser);
+  } catch (error) {
+    res.status(400).send("Error " + error.message);
   }
 });
 
