@@ -13,15 +13,16 @@ const userAuth = async (req, res, next) => {
     const decodeMessage = await jwt.verify(token, "Laxman@123");
 
     //get the user data
-    if (!decodeMessage) {
-      throw new Error("User not found ");
-    }
+   
     const { _id } = decodeMessage;
     const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("User not found ");
+    }
     req.user = user;
     next();
   } catch (error) {
-    res.send("Error: " + error.message);
+    res.send("Error this is userAuthç: " + error.message);
   }
 };
 module.exports = {
