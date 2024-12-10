@@ -54,14 +54,11 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
 userRouter.get("/user/feed", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
-    const feedProfile="firstName lastName photoUrl about skills"
-    const page=parseInt(req.query.page) || 1
-    limit=parseInt(req.query.limit)  || 10
-    limit=limit>50?50 : limit
-    let skip=(page-1)*limit
-    console.log(page,limit);
-    
-
+    const feedProfile = "firstName lastName photoUrl about skills";
+    const page = parseInt(req.query.page) || 1;
+    limit = parseInt(req.query.limit) || 10;
+    limit = limit > 50 ? 50 : limit;
+    let skip = (page - 1) * limit;
 
     //find the list that a person is stored in connection collection
     const findConnectionCollection = await ConnectionRequest.find({
@@ -69,20 +66,23 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
     }).select("fromUserID toUserID");
 
     //now sorting
-    const hideUsersList=new Set()
+    const hideUsersList = new Set();
     //now pushing each item to hideUerslist
     findConnectionCollection.forEach((req) => {
-      hideUsersList.add(req.fromUserID.toString())
-      hideUsersList.add(req.toUserID.toString())
+      hideUsersList.add(req.fromUserID.toString());
+      hideUsersList.add(req.toUserID.toString());
     });
     //now searching from user Collection that doesn't have any connection
-    const showuser= await User.find({
-      $and:[
-        {_id:{$nin:Array.from(hideUsersList)}},
-        {_id:{$ne:loggedInUser._id}}
-      ]
-    }).select(feedProfile).skip(skip).limit(limit)
-    
+    const showuser = await User.find({
+      $and: [
+        { _id: { $nin: Array.from(hideUsersList) } },
+        { _id: { $ne: loggedInUser._id } },
+      ],
+    })
+      .select(feedProfile)
+      .skip(skip)
+      .limit(limit);
+
     res.send(showuser);
   } catch (error) {
     res.status(400).send("Error " + error.message);
