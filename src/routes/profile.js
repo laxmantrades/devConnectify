@@ -24,16 +24,33 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     const loggedInuser = req.user;
 
     Object.keys(req.body).forEach((key) => (loggedInuser[key] = req.body[key]));
+
+    await loggedInuser.save();
+    console.log(loggedInuser);
     res.json({
       message: `${loggedInuser.firstName} just updated your details`,
       data: loggedInuser,
     });
-    await loggedInuser.save();
-    console.log(loggedInuser);
 
     //first find by id
   } catch (error) {
-    res.status(400).send("Error: " + error.message);
+    // Handle validation errors
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => {
+        // Customize the message for 'firstName' field
+        if (err.path === "firstName") {
+          return "Invalid FirstName";
+        }
+        if (err.path === "lastName") {
+          return "Invalid LastName";
+        }
+        return err.message; // Default to the original message for other fields
+      });
+
+      return res.status(400).json({ error: messages });
+    }
+
+    res.status(400).send("Error: " + error);
   }
 });
 profileRouter.patch("/profile/password", userAuth, async (req, res) => {
@@ -55,11 +72,13 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
 
     //checking if the newpassword and the confirmed password(password) matches
     if (newPassword !== password) {
-      throw new Error("The new password and confirm password doesn't match");
+      res
+        .status(400)
+        .send("The new password and confirm password doesn't match");
 
       //checking if the currentpassword and newpassword matches
     } else if (currentPassword === password) {
-      throw new Error("You can't change the same password");
+      res.status(400).send("You can't change the same password");
 
       //if we pass all the checks then
     } else {
@@ -69,7 +88,6 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
       //updating the new password with the hasedpassword
       loggedInuser.password = hashPassword;
       await loggedInuser.save();
-      console.log(loggedInuser);
     }
     //logic
 

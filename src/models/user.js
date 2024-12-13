@@ -8,8 +8,12 @@ const userSchema = mongoose.Schema(
   {
     firstName: {
       type: String,
-      maxLength: 40,
+
       required: true,
+      validate(value){
+        if(!validator.isLength(value,{min:2,max:40}))
+          throw new Error("Invalid Name")
+      }
     },
     lastName: {
       type: String,
@@ -98,7 +102,10 @@ userSchema.methods.getJWT = async function () {
 };
 userSchema.methods.validatePassword = async function (passwordInputByuser) {
   const user = this;
-  const isPasswordValid = await bcrypt.compare(passwordInputByuser, user.password);
+  const isPasswordValid = await bcrypt.compare(
+    passwordInputByuser,
+    user.password
+  );
   return isPasswordValid;
 };
 

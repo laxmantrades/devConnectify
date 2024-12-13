@@ -11,13 +11,13 @@ userRouter.get("/user/request/received", userAuth, async (req, res) => {
     const findConnection = await ConnectionRequest.find({
       toUserID: isLoggedinUser._id,
       status: "interested",
-    }).populate("fromUserID", "firstName lastName photoUrl");
+    }).populate("fromUserID", "firstName lastName photoUrl about");
 
-    const data = findConnection.map((row) => row.fromUserID); //this will basically give me the data of the fromuserId only
+    // const data = findConnection.map((row) => row.fromUserID); //this will basically give me the data of the fromuserId only
 
     res.json({
       message: "Succefully fetched the information",
-      data: data,
+      data: findConnection,
     });
   } catch (error) {
     res.status(400).send("Error" + error.message);
