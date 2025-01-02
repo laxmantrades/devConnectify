@@ -3,6 +3,7 @@ const requestRouter = express.Router();
 const { userAuth } = require("../Middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
+const sendEmail=require("../utils/sendEmail")
 
 requestRouter.post("/request/:status/:userID", userAuth, async (req, res) => {
   try {
@@ -40,6 +41,9 @@ requestRouter.post("/request/:status/:userID", userAuth, async (req, res) => {
       status,
     }).save();
 
+    const emailRes=await sendEmail.run()
+    console.log(emailRes);
+    
     //TODO to make it dynamic
 
     res.send("Succefully send a request");

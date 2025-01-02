@@ -4,6 +4,7 @@ const connectDb = require("../src/config/database");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+require('dotenv').config()
 
 //This will convert the json object from all the routes and methods
 app.use(express.json());
@@ -27,7 +28,7 @@ app.use("/", requestRouter);
 app.use("/", userRouter);
 
 connectDb().then(() => {
-  app.listen(7777, () => {
-    console.log("Server is listening to port 7777");
+  app.listen(process.env.PORT, () => {
+    console.log("Server is listening to port --");
   });
 });

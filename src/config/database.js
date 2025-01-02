@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const connectDb = async () => {
   try {
     await mongoose.connect(
-      "mongodb+srv://Node:WrKJ68BjbWKnXOXO@cluster0.ckzzq.mongodb.net/devTinder"
+      process.env.DB_CONNECIONSTRING
     );
     console.log("DB Connection Started");
     

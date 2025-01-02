@@ -34,7 +34,9 @@ authRouter.post("/signup", async (req, res) => {
       data: { savedUser },
     });
   } catch (err) {
-    res.send("Error saving the Database" + err.message);
+    res.status(400).send(err);
+    
+
   }
 });
 authRouter.post("/login", async (req, res) => {
