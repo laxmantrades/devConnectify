@@ -15,7 +15,7 @@ const userAuth = async (req, res, next) => {
     //get the user data
 
     const { _id } = decodeMessage;
-    const user = await User.findById(_id);
+    const user = await User.findById(_id).select("firstName lastName photoUrl");
     if (!user) {
       throw new Error("User not found ");
     }
