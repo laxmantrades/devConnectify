@@ -5,7 +5,8 @@ const projectSchema= new mongoose.Schema({
         required:true
     },
     projectImage:{
-        type:String
+        type:String,
+        default:"https://trekmag.co.uk/wp-content/uploads/What-is-a-Project-1-scaled-1.jpg"
         
     },
     skills:{
