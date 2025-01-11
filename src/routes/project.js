@@ -1,12 +1,15 @@
 const express = require("express");
 const { userAuth } = require("../Middlewares/auth");
 const PROJECT = require("../models/projects.model");
+const USER=require("../models/user")
 const projectRouter = express.Router();
 
 projectRouter.post("/create-project", userAuth, async (req, res) => {
   try {
-    const user = req.user;
+    const _id = req.user._id;
     const { projectName, projectImage, skills, description } = req.body;
+
+    const user=await USER.findById(_id).select("firstName lastName about skills photoUrl")
     if (!user) {
       return res.status(400).json({
         message: "No user found",
@@ -18,7 +21,7 @@ projectRouter.post("/create-project", userAuth, async (req, res) => {
       description,
       projectImage,
       creator: user,
-    }).save();
+    }) .save();
     res.status(200).json({
       message: "Succefully created project",
       project,
@@ -29,7 +32,7 @@ projectRouter.post("/create-project", userAuth, async (req, res) => {
     });
   }
 });
-projectRouter.get("/project", userAuth, async (req, res) => {
+projectRouter.get("/myprojects", userAuth, async (req, res) => {
   try {
     const user = req.user._id;
     if (!user) {
