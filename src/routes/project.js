@@ -1,7 +1,7 @@
 const express = require("express");
 const { userAuth } = require("../Middlewares/auth");
 const PROJECT = require("../models/projects.model");
-const USER=require("../models/user")
+const USER = require("../models/user");
 const projectRouter = express.Router();
 
 projectRouter.post("/create-project", userAuth, async (req, res) => {
@@ -9,7 +9,9 @@ projectRouter.post("/create-project", userAuth, async (req, res) => {
     const _id = req.user._id;
     const { projectName, projectImage, skills, description } = req.body;
 
-    const user=await USER.findById(_id).select("firstName lastName about skills photoUrl")
+    const user = await USER.findById(_id).select(
+      "firstName lastName about skills photoUrl"
+    );
     if (!user) {
       return res.status(400).json({
         message: "No user found",
@@ -21,7 +23,7 @@ projectRouter.post("/create-project", userAuth, async (req, res) => {
       description,
       projectImage,
       creator: user,
-    }) .save();
+    }).save();
     res.status(200).json({
       message: "Succefully created project",
       project,
@@ -88,5 +90,35 @@ projectRouter.get("/project/view/:projectId", userAuth, async (req, res) => {
     });
   }
 });
+
 //patch todo
+projectRouter.patch("/project/edit/:projectId", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    const { projectName, projectImage, skills, description } = req.body;
+    const { projectId } = req.params;
+    const project = await PROJECT.findOneAndUpdate(
+      {
+        _id: projectId,
+        "creator._id": user._id,
+      },
+      { $set: { projectName, projectImage, skills, description } }, // Update
+      { new: true }
+    );
+    if (!project) {
+      return res.status(404).send({
+        message: "Failed to find the project",
+      });
+    }
+    
+
+    res.send(project);
+  } catch (error) {
+    console.log(error);
+    
+    res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+});
 module.exports = projectRouter;
