@@ -91,7 +91,7 @@ projectRouter.get("/project/view/:projectId", userAuth, async (req, res) => {
   }
 });
 
-//patch todo
+
 projectRouter.patch("/project/edit/:projectId", userAuth, async (req, res) => {
   try {
     const user = req.user;
