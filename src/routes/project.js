@@ -3,11 +3,14 @@ const { userAuth } = require("../Middlewares/auth");
 const PROJECT = require("../models/projects.model");
 const USER = require("../models/user");
 const projectRouter = express.Router();
+const mongoose = require("mongoose");
 
 projectRouter.post("/create-project", userAuth, async (req, res) => {
   try {
     const _id = req.user._id;
     const { projectName, projectImage, skills, description } = req.body;
+    const imageUrl =
+      projectImage?.trim() !== "" ? projectImage.trim() : undefined;
 
     const user = await USER.findById(_id).select(
       "firstName lastName about skills photoUrl"
@@ -21,22 +24,28 @@ projectRouter.post("/create-project", userAuth, async (req, res) => {
       projectName,
       skills,
       description,
-      projectImage,
+      imageUrl,
       creator: user,
     }).save();
+    
     res.status(200).json({
+      success:true,
       message: "Succefully created project",
       project,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "Failed to create project!",
     });
   }
 });
-projectRouter.get("/myprojects", userAuth, async (req, res) => {
+projectRouter.get("/myprojects/:userId?", userAuth, async (req, res) => {
   try {
-    const user = req.user._id;
+    const creatorId =
+      req.params.userId !== undefined ? req.params.userId : req.user._id;
+    const user = new mongoose.Types.ObjectId(creatorId);
+
     if (!user) {
       return res.status(404).json({
         message: "User not found",
@@ -44,11 +53,16 @@ projectRouter.get("/myprojects", userAuth, async (req, res) => {
     }
 
     const project = await PROJECT.find({ "creator._id": user });
+    console.log(user);
+
     res.status(200).json({
+      success: true,
       message: "Successfully fetched project",
       project,
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       message: "Failed to fetch projects",
     });
@@ -91,11 +105,11 @@ projectRouter.get("/project/view/:projectId", userAuth, async (req, res) => {
   }
 });
 
-
 projectRouter.patch("/project/edit/:projectId", userAuth, async (req, res) => {
   try {
     const user = req.user;
     const { projectName, projectImage, skills, description } = req.body;
+
     const { projectId } = req.params;
     const project = await PROJECT.findOneAndUpdate(
       {
@@ -110,12 +124,14 @@ projectRouter.patch("/project/edit/:projectId", userAuth, async (req, res) => {
         message: "Failed to find the project",
       });
     }
-    
 
-    res.send(project);
+    res.status(200).json({
+      success: true,
+      project,
+    });
   } catch (error) {
     console.log(error);
-    
+
     res.status(500).json({
       message: "Something went wrong",
     });
