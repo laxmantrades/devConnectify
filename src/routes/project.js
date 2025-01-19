@@ -1,6 +1,7 @@
 const express = require("express");
 const { userAuth } = require("../Middlewares/auth");
 const PROJECT = require("../models/projects.model");
+const CONNECTION = require("../models/connectionRequest");
 const USER = require("../models/user");
 const projectRouter = express.Router();
 const mongoose = require("mongoose");
@@ -27,9 +28,9 @@ projectRouter.post("/create-project", userAuth, async (req, res) => {
       imageUrl,
       creator: user,
     }).save();
-    
+
     res.status(200).json({
-      success:true,
+      success: true,
       message: "Succefully created project",
       project,
     });
@@ -134,6 +135,48 @@ projectRouter.patch("/project/edit/:projectId", userAuth, async (req, res) => {
 
     res.status(500).json({
       message: "Something went wrong",
+    });
+  }
+});
+projectRouter.get("/projects/interested&accepted", userAuth, async (req, res) => {
+  try {
+    const id = req.user._id;
+
+    const connection = await CONNECTION.find({
+      $or: [
+        {
+          fromUserID: id,
+          $or: [{ status: "interested" }, { status: "accepted" }],
+        },
+        {
+          toUserID: id,
+          $or: [{ status: "interested" }, { status: "accepted" }],
+        },
+      ],
+    });
+    const creatorId = connection.map((connection) => {
+      if (connection.fromUserID.equals(id)) {
+        return new mongoose.Types.ObjectId(connection.toUserID);
+      } else return new mongoose.Types.ObjectId(connection.fromUserID);
+    });
+
+    const project = await PROJECT.find({
+      $or: [
+        {
+          "creator._id": id,
+        },
+        { "creator._id": { $in: creatorId } },
+      ],
+    });
+    res.status(200).json({
+      message: "Succefully fetched the data",
+      project,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Failed to fetch projects",
     });
   }
 });

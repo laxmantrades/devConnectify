@@ -41,8 +41,8 @@ requestRouter.post("/request/:status/:userID", userAuth, async (req, res) => {
       status,
     }).save();
 
-    const emailRes=await sendEmail.run()
-    console.log(emailRes);
+    //const emailRes=await sendEmail.run()
+    //console.log(emailRes);
     
     //TODO to make it dynamic
 
