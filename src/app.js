@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const initializeSocket = require("./utils/socket");
 require('dotenv').config()
-require("./utils/cronjob")
+//require("./utils/cronjob")
 
 //This will convert the json object from all the routes and methods
 app.use(express.json());
