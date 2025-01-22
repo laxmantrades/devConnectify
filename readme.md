@@ -1,163 +1,163 @@
-## Create a repository
+# Create a repository
 
-## Initialize the repository
+# Initialize the repository
 
-## node_modules, package.json, package-lock.json
+# node_modules, package.json, package-lock.json
 
-## Install express
+# Install express
 
-## Create a server
+# Create a server
 
-## Listen to port 7777
+# Listen to port 7777
 
-## Write request handlers for /test , /hello
+# Write request handlers for /test , /hello
 
-## Install nodemon and update scripts inside package.json
+# Install nodemon and update scripts inside package.json
 
-## What are dependencies
+# What are dependencies
 
 - dependencies refer to the external libraries or modules that your project relies on to work correctly. These dependencies are usually specified in your project’s package.json file, which is the central configuration file for Node.js projects.
 
-## What is the use of "-g" while npm install
+# What is the use of "-g" while npm install
 
 - This Means installing at the global level
 
-## Difference between caret and tilde ( ^ vs ~ )
+# Difference between caret and tilde ( ^ vs ~ )
 
 - ~1.2.3 → Allows updates to 1.2.x, but not 1.3.0 or higher.
 - ~0.2.3 → Allows updates to 0.2.x, but not 0.3.0.
 - To update to 2 you need to update manually
 
-## initialize git
+# initialize git
 
-## Play with routes and route extensions ex. /hello, / , hello/2, /xyz
+# Play with routes and route extensions ex. /hello, / , hello/2, /xyz
 
-## Order of the routes matter a lot
+# Order of the routes matter a lot
 
-## Install Postman app and make a workspace/collectio > test API call
+# Install Postman app and make a workspace/collectio > test API call
 
-## Write logic to handle GET, POST, PATCH, DELETE API Calls and test them on Postman
 
-## Explore routing and use of ?, + , (), \* in the routes
 
-## Use of regex in routes /a/ , /.\*fly$/
+# Explored routing and use of ?, + , (), \* in the routes
 
-## Reading the query params in the routes
+# Use of regex in routes /a/ , /.\*fly$/
 
-## Reading the dynamic routes
+# Reading the query params in the routes
 
-## Multiple Route Handlers - Play with the code
+# Reading the dynamic routes
 
-## next()
 
-## next function and errors along with res.send()
 
-## app.use("/route", rH, [rH2, rH3], rH4, rh5);
+# next()
 
-## What is a Middleware? Why do we need it?
+# next function and errors along with res.send()
 
-- #### Middleware in web development acts as a pipeline through which HTTP requests pass before reaching the final route handler or after the response has been sent. It allows developers to:
+# app.use("/route", rH, [rH2, rH3], rH4, rh5);
 
-#### Modularize and centralize logic like logging, authentication, and error handling.
+# What is a Middleware? Why do we need it?
+
+-  Middleware in web development acts as a pipeline through which HTTP requests pass before reaching the final route handler or after the response has been sent. It allows developers to:
+
+# Modularize and centralize logic like logging, authentication, and error handling.
 
 - Control the flow of the request-response cycle.
 - Perform tasks like validation, caching, and transformation in a reusable manner.
 - Middleware is crucial for organizing complex logic, improving maintainability, and ensuring that applications - are secure, performant, and scalable.
 
-## How express JS basically handles requests behind the scenes
+# How express JS basically handles requests behind the scenes
 
-## Difference app.use and app.all
+# Difference app.use and app.all
 
 - app.use() is primarily for middleware that handles requests globally (for all routes) or for specific paths,and it does not depend on HTTP methods.
 - app.all() is a route handler that responds to all HTTP methods for a given route.
 
-## Write a dummy auth middleware for admin
+# Write a dummy auth middleware for admin
 
-## Write a dummy auth middleware for all user routes, except /user/login
+# Write a dummy auth middleware for all user routes, except /user/login
 
-## Error Handling using app.use("/", (err, req, res, next) = {});
+# Error Handling using app.use("/", (err, req, res, next) = {});
 
-## Create a free cluster on MongoDB official website (Mongo Atlas)
+# Create a free cluster on MongoDB official website (Mongo Atlas)
 
-## Install mongoose library
+# Install mongoose library
 
-## Connect your application to the Database "Connection-url"/devTinder
+# Connect your application to the Database "Connection-url"/devTinder
 
-## Call the connectDB function and connect to database before starting application on 7777
+# Call the connectDB function and connect to database before starting application on 7777
 
-## Created a userSchema & user Model
+# Created a userSchema & user Model
 
-## Created POST /sigup API to add data to database
+# Created POST /sigup API to add data to database
 
-## Pushed some documents using API calls from postman
+# Pushed some documents using API calls from postman
 
-## Error Handling using try , catch
+# Error Handling using try , catch
 
-## JS object vs JSON (difference)
+# JS object vs JSON (difference)
 
-## Added the express.json middleware to your app
+# Added the express.json middleware to your app
 
-## Made signup API dynamic to recive data from the end user
+# Made signup API dynamic to recive data from the end user
 
-## User.findOne with duplucate email ids, which object returned
+# User.findOne with duplucate email ids, which object returned
 
-## API- Get user by email
+# API- Get user by email
 
-## API - Feed API - GET /feed - get all the users from the database
+# API - Feed API - GET /feed - get all the users from the database
 
-## API - Get user by ID
+# API - Get user by ID
 
-## Createed a delete user API
+# Createed a delete user API
 
-## Difference between PATCH and PUT
+# Difference between PATCH and PUT
 
 - Patch means updating a specific field while if we use put to change all the things in bulk. If we did not write any fields to update then it will write null itself
 
-## API - Updated a user
+# API - Updated a user
 
-## Explored the Mongoose Documention for Model methods
+# Explored the Mongoose Documention for Model methods
 
-## What are options in a Model.findOneAndUpdate method, explore more about it
+# What are options in a Model.findOneAndUpdate method, explore more about it
 
 - findOneAndUpdate will find by any of the field given and will update
 
-## API - Update the user with email ID
+# API - Update the user with email ID
 
-## Explore the Mongoose Documention for Model methods
+# Explore the Mongoose Documention for Model methods
 
-## What are options in a Model.findOneAndUpdate method, explore more about it
+# What are options in a Model.findOneAndUpdate method, explore more about it
 -  We have runvalidators options 
 
-## API - Update the user with email ID
+# API - Update the user with email ID
 
-## Explore schematype options from the documention
+# Explore schematype options from the documention
 
-## add required, unique, lowercase, min, minLength, trim
+# add required, unique, lowercase, min, minLength, trim
 
-## Add default
+# Add default
 
-## Create a custom validate function for gender
+# Create a custom validate function for gender
 
-## Improve the DB schema - PUT all appropiate validations on each field in Schema
+# Improve the DB schema - PUT all appropiate validations on each field in Schema
 
-## Add timestamps to the userSchema
+# Add timestamps to the userSchema
 
-## Add API level validation on Patch request & Signup post api
+# Add API level validation on Patch request & Signup post api
 
-## DATA Sanitizing - Add API validation for each field
+# DATA Sanitizing - Add API validation for each field
 
-## Install validator
+# Install validator
 
-## Explore validator library funcation and Use vlidator funcs for password, email, photoURL
+# Explore validator library funcation and Use vlidator funcs for password, email, photoURL
 
-## NEVER TRUST req.body
+# NEVER TRUST req.body
 
-## Validate data in Signup API
+# Validate data in Signup API
 
-## Install bcrypt package
+# Install bcrypt package
 
-## Create PasswordHash using bcrypt.hash & save the user is excrupted password
+# Create PasswordHash using bcrypt.hash & save the user is excrupted password
 
-## Create login API
+# Create login API
 
-## Compare passwords and throw errors if email or password is invalid
+# Compare passwords and throw errors if email or password is invalid

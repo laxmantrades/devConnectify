@@ -54,7 +54,7 @@ projectRouter.get("/myprojects/:userId?", userAuth, async (req, res) => {
     }
 
     const project = await PROJECT.find({ "creator._id": user });
-    console.log(user);
+    
 
     res.status(200).json({
       success: true,
@@ -62,7 +62,7 @@ projectRouter.get("/myprojects/:userId?", userAuth, async (req, res) => {
       project,
     });
   } catch (error) {
-    console.log(error);
+    
 
     return res.status(500).json({
       message: "Failed to fetch projects",
@@ -98,7 +98,7 @@ projectRouter.get("/project/view/:projectId", userAuth, async (req, res) => {
       project: project || [],
     });
   } catch (error) {
-    console.log(error);
+    
 
     return res.status(500).json({
       message: "Failed to fetch project",
@@ -131,7 +131,7 @@ projectRouter.patch("/project/edit/:projectId", userAuth, async (req, res) => {
       project,
     });
   } catch (error) {
-    console.log(error);
+    
 
     res.status(500).json({
       message: "Something went wrong",
@@ -173,7 +173,7 @@ projectRouter.get("/projects/interested&accepted", userAuth, async (req, res) =>
       project,
     });
   } catch (error) {
-    console.log(error);
+    
 
     return res.status(500).json({
       message: "Failed to fetch projects",
